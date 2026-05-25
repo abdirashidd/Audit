@@ -76,10 +76,14 @@ def _get_arr(d, key, default):
 #                          SAHIFA SOZLAMALARI
 # ═══════════════════════════════════════════════════════════════════════════════
 
-st.set_page_config(page_title="ALSHAMS SOLAR | Energo-Audit", page_icon="⚡", layout="wide", initial_sidebar_state="collapsed")
+try:
+    st.set_page_config(page_title="ALSHAMS SOLAR | Energo-Audit", page_icon="⚡", layout="wide", initial_sidebar_state="collapsed")
+except:
+    pass
 
 st.markdown("""
 <style>
+    body { margin: 0; padding: 0; }
     .main-header {
         background: linear-gradient(135deg, #002060 0%, #004080 100%);
         color: white;
@@ -224,11 +228,30 @@ with st.form(key="audit_form", border=False):
 if submit:
     progress = st.progress(0, text="Ishga tushirilmoqda...")
     try:
-        if not os.path.exists("shablon.docx"):
-            st.error("❌ shablon.docx topilmadi!")
+        # Shablon tekshirish — Cloud va local uchun
+        template_paths = [
+            "shablon.docx",                          # Local root
+            "/mount/src/energy/shablon.docx",       # Streamlit Cloud path
+            "./shablon.docx",                        # Current dir
+            os.path.join(os.path.dirname(__file__), "shablon.docx"),  # Script dir
+        ]
+        
+        template_path = None
+        for tp in template_paths:
+            if os.path.exists(tp):
+                template_path = tp
+                break
+        
+        if not template_path:
+            st.error(
+                "❌ **shablon.docx topilmadi!**\n\n"
+                "GitHub repozitoriyangizda `app.py` bilan bir joyda bo'lishi kerak.\n"
+                "Tekshirilgan yo'llar:\n" +
+                "\n".join([f"  • {p}" for p in template_paths])
+            )
             st.stop()
 
-        doc = DocxTemplate("shablon.docx")
+        doc = DocxTemplate(template_path)
         context = {}
         now = datetime.datetime.now()
         solar_kw = float(solar_kw_opt)
