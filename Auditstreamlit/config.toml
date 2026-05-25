@@ -1,0 +1,198 @@
+# 🤖 Telegram Bot Setup — Qadam-baqadam
+
+## 1️⃣ Telegram Bot Tokenini Olish (@BotFather)
+
+1. **Telegram**'ni oching
+2. "@BotFather" deb izlang yoki [BotFather](https://t.me/botfather) ga bosing
+3. `/newbot` yozing
+4. **Savollarga javob bering:**
+   - Bot nomi: `ALSHAMS Energy Audit Bot` (yoki boshqa)
+   - Bot username: `alshams_energy_bot` (oxirida `_bot` bo'lishi shart)
+
+5. **Token olab olasiz**, masalan:
+   ```
+   1234567890:ABCdefGHIjklmnoPQRstuvWXYZ1234567890
+   ```
+
+6. `bot.py` dagi qatorni o'zgartiring:
+   ```python
+   TELEGRAM_TOKEN = "1234567890:ABCdefGHIjklmnoPQRstuvWXYZ1234567890"
+   ```
+
+---
+
+## 2️⃣ Google Gemini API Kalitini Olish
+
+1. **aistudio.google.com** ga kiring
+2. "**Get API key**" bosing
+3. Yangi kalit yarating (yoki mavjudini nusxa ko'chiring)
+4. Kalit ko'rinadi, masalan:
+   ```
+   AIzaSyA1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6Q
+   ```
+
+5. `bot.py` dagi qatorni o'zgartiring:
+   ```python
+   GEMINI_API_KEY = "AIzaSyA1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6Q"
+   ```
+
+---
+
+## 3️⃣ Streamlit URL'ni Kiriting
+
+1. **Streamlit Cloud**'da deploy qalgach, sizga URL beriladi:
+   ```
+   https://alshams-energy-audit.streamlit.app/
+   ```
+
+2. `bot.py` dagi qatorni o'zgartiring:
+   ```python
+   WEB_APP_URL = "https://alshams-energy-audit.streamlit.app/"
+   ```
+
+---
+
+## 4️⃣ Bot'ni Mahalliy Kompyuterda Ishga Tushirish
+
+### Windows:
+
+```cmd
+cd C:\alshams
+python bot.py
+```
+
+Ekranda chiqishi kerak:
+```
+============================================================
+🤖 ALSHAMS bot ishga tushdi!
+   Web URL: https://alshams-energy-audit.streamlit.app/
+============================================================
+```
+
+### Mac/Linux:
+
+```bash
+cd ~/alshams
+python3 bot.py
+```
+
+---
+
+## 5️⃣ Bot'ni Sinash
+
+### Telegram'da:
+
+1. `/start` yozing → Bot salom beradi
+2. Matnlar yuboring:
+   ```
+   Xo'jayinning ismi: Qo'chqorov Aziz
+   Manzil: Tashkent, Mirzo Ulugbek ko'chasi 123
+   Bino maydoni: 150 m²
+   Qavatlar: 2
+   Xonalar: 5
+   O'rnatiladigan QES: 10 kVt
+   ```
+3. Xona rasmlarini yuboring (qayta-qayta)
+4. `/analyze` yozing
+5. **Bot Gemini API'ga yuboradi → tahlil qiladi → tugma yuboradi**
+6. Tugmani bosing → **Streamlit saytga o'tiladi**
+7. Barcha ma'lumotlar avtomatik to'ldirilgan bo'ladi
+8. "**WORD HUJJAT YARATISH**" tugmasini bosing
+9. **Hujjat yuklab olinadi** ✅
+
+---
+
+## 🔍 Bot'ni Monitoring — Qanday Ishlayotganini Ko'rish
+
+Terminal'da (bot ishlayotgan joyda) real vaqtda:
+```
+[timestamp] [INFO] 🤖 ALSHAMS bot ishga tushdi!
+[timestamp] [INFO] [123456] Tahlil boshlandi: 5 matn, 3 rasm
+[timestamp] [INFO] [123456] Gemini javobi keldi (2450 belgi)
+[timestamp] [INFO] [123456] JSON muvaffaqiyatli parsing: ['mijoz_ismi', 'manzil'...]
+[timestamp] [INFO] [123456] URL uzunligi: 3856 belgi
+[timestamp] [INFO] [123456] Muvaffaqiyatli yakunlandi.
+```
+
+---
+
+## ❌ Muammolar va Yechimlari
+
+### ❌ "Bot javob bermaydi"
+
+**Sabab:** Terminal'da bot.py ishlamayapti
+**Yechim:** Bot oynasiga qaytib, bot ishga tushganini tekshiring:
+```bash
+python bot.py
+```
+
+### ❌ "Invalid API key"
+
+**Sabab:** TELEGRAM_TOKEN yoki GEMINI_API_KEY noto'g'ri
+**Yechim:**
+- @BotFather dan yangi token oling
+- aistudio.google.com dan yangi API key oling
+- `bot.py`'da o'zgartiring
+
+### ❌ "urllib3.exceptions.MaxRetryError"
+
+**Sabab:** Internet uzildi
+**Yechim:** Bot avtomatik 5 soniyadan keyin qayta ulanadi — xavf yo'q
+
+### ❌ "Gemini API kvotasi tugadi"
+
+**Sabab:** Google API limit tugadi (free = 60 so'rovcha kuniga)
+**Yechim:**
+- Keyingi kun kutib oling
+- yoki Gemini API'ga to'lov qo'ying (Google Cloud Console)
+
+---
+
+## 📝 Bot'ni 24/7 Ishlatish (Optimallashtirish)
+
+Agarda bot hech vaqt to'xtab turmasligi uchun:
+
+### Windows'da:
+**Task Scheduler** orqali bot'ni avtomatik ishga tushirish:
+1. "Task Scheduler" oching
+2. "Create Basic Task" → "Bot" nomini bering
+3. "Triggers" → "On startup"
+4. "Actions" → Program: `python.exe` | Arguments: `C:\alshams\bot.py`
+5. "OK" bosing
+
+### Mac/Linux'da:
+**crontab** orqali:
+```bash
+crontab -e
+```
+Quyidagini qo'shing:
+```
+@reboot python3 /home/user/alshams/bot.py > /tmp/bot.log 2>&1
+```
+
+---
+
+## 📊 Bot Loglarini Ko'rish
+
+Bot qaysi xatolar berish va qanday ishlayotganini ko'rish:
+```bash
+tail -f bot.log  # Real vaqtda log
+```
+
+Yoki Windows'da:
+```cmd
+type bot.log
+```
+
+---
+
+## ✅ Barcha Sozlamalar Tugallandi!
+
+**Endi:**
+1. ✅ TELEGRAM_TOKEN kiritildi
+2. ✅ GEMINI_API_KEY kiritildi
+3. ✅ WEB_APP_URL kiritildi
+4. ✅ Bot mahalliyda ishga tushti
+5. ✅ Streamlit Cloud'da deploy qilindi
+
+**Tayyor! Telegram'da /start bosib sinay olasiz.** 🚀
